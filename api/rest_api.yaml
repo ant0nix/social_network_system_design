@@ -1,0 +1,421 @@
+openapi: 3.1.0
+
+tags:
+  - name: User
+  - name: Subscribe
+  - name: Post
+
+info:
+  title: 'Travel Social Network'
+  version: 1.0.0
+
+paths:
+  /api/v1/sign-up:
+    post:
+      summary: 'New user registration'
+      description: 'This path sign up new user'
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+      responses:
+        201:
+          description: "Successes sign up"
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        400:
+          description: "Invalid user data"
+        409:
+          description: "Current login exist"
+        500:
+          description: "Internal error"
+  /api/v1/sign-in:
+    post:
+      summary: 'Login user'
+      description: 'Login user'
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+      responses:
+        204:
+          description: "Successes sign in"
+        403:
+          description: "Invalid user login/password"
+        500:
+          description: "Internal error"
+  /api/v1/user/{id}:
+    get:
+      summary: 'Get user'
+      description: 'get user'
+      tags:
+        - User
+      parameters:
+        - name: id
+          description: "user id"
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: "User"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: "doesn't exist user with this id"
+        500:
+          description: "Internal error"
+  /api/v1/user:
+    get:
+      summary: 'List users'
+      description: 'List users'
+      tags:
+        - User
+      parameters:
+        - name: filter
+          description: "filter"
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: "User"
+          content:
+            application/json:
+              schema:
+                type: array
+                'items':
+                  $ref: '#/components/schemas/User'
+        404:
+          description: "doesn't exist user with this id"
+        500:
+          description: "Internal error"
+  /api/v1/subscribe/{id}:
+    put:
+      summary: 'Subscribe'
+      description: 'Subscribe on user/country/community'
+      tags:
+        - Subscribe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "id of user/community/country"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        204:
+          description: "Successes subscribe"
+        400:
+          description: "Invalid subscribe request"
+        500:
+          description: "Internal error"
+    delete:
+      summary: 'Unsubscribe'
+      description: 'Unsubscribe on user/country/community'
+      tags:
+        - Subscribe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "id of user/community/country"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        204:
+          description: "Successes unsubscribe"
+        400:
+          description: "Invalid unsubscribe request"
+        500:
+          description: "Internal error"
+    get:
+      summary: 'List of subscriptions'
+      description: 'List of users subscriptions'
+      tags:
+        - Subscribe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "user id"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: "List of subscribes"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscribes'
+        400:
+          description: "Invalid subscribe request"
+        500:
+          description: "Internal error"
+
+  /api/v1/get-post/{id}:
+    get:
+      summary: 'Get one posts'
+      description: 'Get user/community/countries post'
+      tags:
+        - Posts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "id of user/community/country"
+          schema:
+            type: string
+            format: uuid
+        - name: feed
+          in: query
+          required: false
+          description: 'if set true you should set user, with makes request, id as id'
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: "List of posts"
+          content:
+            application/json:
+              schema:
+                type: array
+                'items':
+                  $ref: '#/components/schemas/Post'
+        400:
+          description: "Invalid post request"
+        500:
+          description: "Internal error"
+  /api/v1/post/{id}:
+      get:
+        summary: 'List posts'
+        description: 'List user/community/countries post or news feed'
+        tags:
+          - Posts
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: "id of user/community/country"
+            schema:
+              type: string
+              format: uuid
+          - name: feed
+            in: query
+            required: false
+            description: 'if set true you should set user, with makes request, id as id to see a news feed'
+            schema:
+              type: boolean
+        responses:
+          200:
+            description: "List of posts"
+            content:
+              application/json:
+                schema:
+                  type: array
+                  'items':
+                    $ref: '#/components/schemas/Post'
+          400:
+            description: "Invalid post request"
+          404:
+            description: "Doesn't exist this id"
+          500:
+            description: "Internal error"
+      post:
+        summary: 'Create posts'
+        description: 'Create new post'
+        tags:
+          - Posts
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: "id of user/community"
+            schema:
+              type: string
+              format: uuid
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUpdatePost'
+        responses:
+          204:
+            description: "Success create post"
+          400:
+            description: "Invalid post request"
+          404:
+            description: "Doesn't exist this id"
+          500:
+            description: "Internal error"
+      put:
+        summary: 'Update posts'
+        description: 'Get user/community/countries post or news feed'
+        tags:
+          - Posts
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: "id of user/community"
+            schema:
+              type: string
+              format: uuid
+          - name: post_id
+            in: query
+            required: true
+            description: "id of post"
+            schema:
+              type: string
+              format: uuid
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUpdatePost'
+        responses:
+          201:
+            description: "Success create post"
+          400:
+            description: "Invalid post request"
+          404:
+            description: "Doesn't exist this id"
+          500:
+            description: "Internal error"
+      delete:
+        summary: 'delete post'
+        description: 'delete user/community/countries post'
+        tags:
+          - Posts
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: "id of post"
+            schema:
+              type: string
+              format: uuid
+        responses:
+          204:
+            description: "Success deleted"
+          400:
+            description: "Invalid post request"
+          404:
+            description: "Doesn't exist this id"
+          500:
+            description: "Internal error"
+
+components:
+  schemas:
+    SignUpRequest:
+      type: object
+      properties:
+        login:
+          type: string
+        passwords:
+          type: string
+        email:
+          type: string
+        fName:
+          type: string
+        lName:
+          type: string
+        birthDate:
+          type: integer
+    SignInRequest:
+      type: object
+      properties:
+        login:
+          type: string
+        passwords:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        login:
+          type: string
+        passwordsHash:
+          type: string
+        email:
+          type: string
+        fName:
+          type: string
+        lName:
+          type: string
+        birthDate:
+          type: integer
+        subscribes:
+          type: object
+          schema:
+            $ref: '#/components/schemas/Subscribes'
+    Subscribes:
+      type: array
+      nullable: true
+      'items':
+        type: string
+        format: uuid
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        owner:
+          type: string
+          format: uuid
+        description:
+          type: string
+        media:
+          type: array
+          items:
+            type: string
+            description: 'url to media in disk'
+        location:
+          type: string
+        reaction:
+          type: integer
+        views:
+          type: integer
+    CreateUpdatePost:
+      type: object
+      properties:
+        owner:
+          type: string
+          format: uuid
+        description:
+          type: string
+        media:
+          type: array
+          items:
+            type: string
+            description: 'url to media in disk'
+        location:
+          type: string
+        reaction:
+          type: integer
+        views:
+          type: integer
