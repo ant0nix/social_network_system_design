@@ -55,7 +55,7 @@ paths:
           description: "Invalid user login/password"
         500:
           description: "Internal error"
-  /api/v1/user/{id}:
+  /api/v1/users/{id}:
     get:
       summary: 'Get user'
       description: 'get user'
@@ -80,7 +80,7 @@ paths:
           description: "doesn't exist user with this id"
         500:
           description: "Internal error"
-  /api/v1/user:
+  /api/v1/users:
     get:
       summary: 'List users'
       description: 'List users'
@@ -106,7 +106,7 @@ paths:
           description: "doesn't exist user with this id"
         500:
           description: "Internal error"
-  /api/v1/subscribe/{id}:
+  /api/v1/subscriptions/{id}:
     put:
       summary: 'Subscribe'
       description: 'Subscribe on user/country/community'
@@ -140,6 +140,18 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: limit
+          in: query
+          required: true
+          description: "pagination limit"
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          required: true
+          description: "pagination limit"
+          schema:
+            type: integer
       responses:
         204:
           description: "Successes unsubscribe"
@@ -172,7 +184,7 @@ paths:
         500:
           description: "Internal error"
 
-  /api/v1/get-post/{id}:
+  /api/v1/post/{id}:
     get:
       summary: 'Get one posts'
       description: 'Get user/community/countries post'
@@ -205,7 +217,7 @@ paths:
           description: "Invalid post request"
         500:
           description: "Internal error"
-  /api/v1/post/{id}:
+  /api/v1/posts/{id}:
       get:
         summary: 'List posts'
         description: 'List user/community/countries post or news feed'
@@ -225,6 +237,18 @@ paths:
             description: 'if set true you should set user, with makes request, id as id to see a news feed'
             schema:
               type: boolean
+          - name: limit
+            in: query
+            required: true
+            description: "pagination limit"
+            schema:
+              type: integer
+          - name: offset
+            in: query
+            required: true
+            description: "pagination limit"
+            schema:
+              type: integer
         responses:
           200:
             description: "List of posts"
