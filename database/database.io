@@ -26,10 +26,19 @@ Table posts {
   createdAt timestamp
 }
 
+Table comments {
+  id uuid
+  ownerID uuid
+  message varchar
+  createdAt timestamp
+}
+
 Table locations{
   id uuid [primary key]
   country varchar
   place varchar
+  geotagX float
+  geotagY float
   views integer [Note:"Per day"]
 }
 
@@ -51,3 +60,5 @@ Table hotAutors{
  Ref: hotPosts.postID - posts.id
  Ref: hotPlaces.placeID - locations.id
  Ref: hotAutors.userID - users.id
+ Ref: comments.ownerID <> users.id
+ Ref: comments.id > posts.id
